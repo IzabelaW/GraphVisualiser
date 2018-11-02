@@ -35,23 +35,23 @@ public class GraphGenerator {
                 Vertex source;
                 Vertex target;
 
+                if(initialGraph.containsVertex(i)){
+                    source = initialGraph.getVertex(i);
+                }
+                else {
+                    source = new Vertex(i, random.nextDouble() * 1000, random.nextDouble() * 500);
+                    initialGraph.addVertex(source);
+                }
+
+                if (initialGraph.containsVertex(j)){
+                    target = initialGraph.getVertex(j);
+                }
+                else {
+                    target = new Vertex(j, random.nextDouble() * 1000, random.nextDouble() * 500);
+                    initialGraph.addVertex(target);
+                }
+
                 if (random.nextDouble() <= probability){
-                    if(initialGraph.containsVertex(i)){
-                        source = initialGraph.getVertex(i);
-                    }
-                    else {
-                        source = new Vertex(i, random.nextDouble() * 1000, random.nextDouble() * 500);
-                        initialGraph.addVertex(source);
-                    }
-
-                    if (initialGraph.containsVertex(j)){
-                        target = initialGraph.getVertex(j);
-                    }
-                    else {
-                        target = new Vertex(j, random.nextDouble() * 1000, random.nextDouble() * 500);
-                        initialGraph.addVertex(target);
-                    }
-
                     Edge edge = new Edge(source, target);
 
                     source.addEdge(edge);

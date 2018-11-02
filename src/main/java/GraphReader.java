@@ -28,9 +28,6 @@ public class GraphReader {
 
         Random random = new Random();
 
-        GraphGenerator graphGenerator = new GraphGenerator();
-        graphGenerator.generateGraph(50, 0.5);
-
         System.out.println("READ GRAPH");
 
         Graph initialGraph = new Graph();
@@ -68,6 +65,7 @@ public class GraphReader {
 
         RadialBasedAlgorithm radialBasedAlgorithm = new RadialBasedAlgorithm(initialGraph);
 
+        System.out.println(initialGraph.getEdges().size());
         return radialBasedAlgorithm.doLogic();
     }
 }

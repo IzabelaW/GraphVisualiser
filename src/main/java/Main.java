@@ -19,8 +19,12 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("fxml/sample.fxml"));
 
-        GraphReader graphReader = new GraphReader();
-        Graph graph = graphReader.readGraph();
+        GraphGenerator graphGenerator = new GraphGenerator();
+        Graph graph = graphGenerator.generatePreferentialAttachementGraph(1000, 5);
+
+//        GraphReader graphReader = new GraphReader();
+//        Graph graph = graphReader.readGraph();
+
         Group root = draw(graph);
 
         primaryStage.setTitle("Graph Visualiser");

@@ -4,7 +4,6 @@ import graph.Edge;
 import graph.Graph;
 import graph.Vertex;
 import javafx.stage.Screen;
-import tree.Node;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,7 +32,7 @@ public class RadialBasedAlgorithm {
 
         double screenWidth = Screen.getPrimary().getBounds().getWidth() - 200;
         double screenHeight = Screen.getPrimary().getBounds().getHeight() - 200;
-        double R = Math.min(screenWidth, screenHeight) / 5;
+        double R = Math.min(screenWidth, screenHeight) / 10;
         double arc;
         double parentArc;
         double lastAngle = 0;
@@ -46,22 +45,22 @@ public class RadialBasedAlgorithm {
 
         for (int i = 1; i < graph.getVertices().size(); i++) {
 
-            Node node = tree.getVertex(i);
-            Node parentNode = node.getParent();
+            Vertex vertex = tree.getVertex(i);
+            Vertex parentVertex = vertex.getParent();
 
-            arc = (node.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
-            parentArc = (parentNode.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
+            arc = (vertex.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
+            parentArc = (parentVertex.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
 
-            if (!parentNode.equals((tree.getVertex(i - 1)).getParent())) {
-                node.setAngle(parentNode.getAngle() - parentArc / 2 + arc / 2);
+            if (!parentVertex.equals((tree.getVertex(i - 1)).getParent())) {
+                vertex.setAngle(parentVertex.getAngle() - parentArc / 2 + arc / 2);
             } else {
-                node.setAngle(lastAngle + lastArc / 2 + arc / 2);
+                vertex.setAngle(lastAngle + lastArc / 2 + arc / 2);
             }
 
-            tree.getVertex(i).setX(centralVertex.getX() + R * node.getLevel() * Math.cos(node.getAngle()));
-            tree.getVertex(i).setY(centralVertex.getY() + R * node.getLevel() * Math.sin(node.getAngle()));
+            tree.getVertex(i).setX(centralVertex.getX() + R * vertex.getLevel() * Math.cos(vertex.getAngle()));
+            tree.getVertex(i).setY(centralVertex.getY() + R * vertex.getLevel() * Math.sin(vertex.getAngle()));
 
-            lastAngle = node.getAngle();
+            lastAngle = vertex.getAngle();
             lastArc = arc;
         }
 
@@ -145,7 +144,7 @@ public class RadialBasedAlgorithm {
         for (Vertex vertex : tree.getVertices()) {
             edges = new ArrayList<>(vertex.getEdges());
             for (Edge edge : edges) {
-                if (!tree.getEdges().contains(edge)) {
+                if (!tree.getEdges().contains(edge) && !removedEdges.contains(edge)) {
                     vertex.removeEdge(edge);
                     removedEdges.add(edge);
                 }
@@ -159,6 +158,8 @@ public class RadialBasedAlgorithm {
         for (Edge edge : removedEdges) {
             tree.addEdge(edge);
         }
+        System.out.println(removedEdges.size());
+
     }
 
 }

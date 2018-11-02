@@ -1,13 +1,11 @@
 package graph;
 
-import tree.Node;
-
 import java.util.ArrayList;
 
 /**
  * Created by izabelawojciak on 15/10/2018.
  */
-public class Vertex extends Node{
+public class Vertex {
 
     private int index;
     private double x;
@@ -15,14 +13,20 @@ public class Vertex extends Node{
     private int degree;
     private int eccentricity;
     private ArrayList<Edge> edges;
+    private int level;
+    private Vertex parent;
+    private ArrayList<Vertex> children;
+    private int numberOfLeafs;
+    private double angle;
+    private int probability;
 
 
     public Vertex(int index, double x, double y) {
-        super();
         this.index = index;
         this.x = x;
         this.y = y;
         edges = new ArrayList<>();
+        children = new ArrayList<>();
     }
 
 
@@ -55,6 +59,10 @@ public class Vertex extends Node{
         degree++;
     }
 
+    public void addEdgeWithoutIncreasingDegree(Edge edge){
+        edges.add(edge);
+    }
+
     public void setIndex(int index) {
         this.index = index;
     }
@@ -73,5 +81,65 @@ public class Vertex extends Node{
 
     public int getEccentricity() {
         return eccentricity;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
+    public int getNumberOfLeafs() {
+        return numberOfLeafs;
+    }
+
+    public Vertex getParent() {
+        return parent;
+    }
+
+    public void setParent(Vertex parent) {
+        this.parent = parent;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void addChild(Vertex child) {
+        children.add(child);
+    }
+
+    public ArrayList<Vertex> getChildren() {
+        return children;
+    }
+
+    public void setNumberOfLeafs(int numberOfLeafs) {
+        this.numberOfLeafs = numberOfLeafs;
+    }
+
+    public int countLeafs() {
+
+        int numberOfLeafs;
+
+        if (children.size() == 0) {
+            return 1;
+        }
+        else {
+            numberOfLeafs = 0;
+            for (Vertex vertex : children) {
+                numberOfLeafs += vertex.countLeafs();
+            }
+            return numberOfLeafs;
+        }
+    }
+
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 }

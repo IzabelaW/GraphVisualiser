@@ -11,14 +11,12 @@ public class Vertex {
     private double x;
     private double y;
     private int degree;
-    private int eccentricity;
     private ArrayList<Edge> edges;
     private int level;
     private Vertex parent;
     private ArrayList<Vertex> children;
     private int numberOfLeafs;
     private double angle;
-    private int probability;
 
 
     public Vertex(int index, double x, double y) {
@@ -75,14 +73,6 @@ public class Vertex {
         edges.remove(edge);
     }
 
-    public void setEccentricity(int eccentricity) {
-        this.eccentricity = eccentricity;
-    }
-
-    public int getEccentricity() {
-        return eccentricity;
-    }
-
     public double getAngle() {
         return angle;
     }
@@ -121,22 +111,6 @@ public class Vertex {
 
     public void setNumberOfLeafs(int numberOfLeafs) {
         this.numberOfLeafs = numberOfLeafs;
-    }
-
-    public int countLeafs() {
-
-        int numberOfLeafs;
-
-        if (children.size() == 0) {
-            return 1;
-        }
-        else {
-            numberOfLeafs = 0;
-            for (Vertex vertex : children) {
-                numberOfLeafs += vertex.countLeafs();
-            }
-            return numberOfLeafs;
-        }
     }
 
     public void setDegree(int degree) {

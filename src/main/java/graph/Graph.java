@@ -9,10 +9,12 @@ public class Graph {
 
     private ArrayList<Vertex> vertices;
     private ArrayList<Edge> edges;
+    private int[][] incidenceMatrix;
 
-    public Graph() {
+    public Graph(int numberOfVertices) {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
+        incidenceMatrix = new int[numberOfVertices][numberOfVertices];
     }
 
     public void addEdge(Edge edge) {
@@ -60,7 +62,15 @@ public class Graph {
             }
         }
 
-        return centralVertex;
+        return vertices.get( 0 );
+    }
+
+    public void addEdgeToIncidenceMatrix(int source, int target){
+        incidenceMatrix[source][target] = 1;
+    }
+
+    public int getEdgeFromIncidenceMatrix(int source, int target){
+        return incidenceMatrix[source][target];
     }
 }
 

@@ -41,7 +41,6 @@ public class RadialBasedAlgorithm {
         centralVertex.setX(screenWidth / 2);
         centralVertex.setY(screenHeight / 2);
         centralVertex.setAngle(Math.PI / 2);
-        centralVertex.setEccentricity(0);
 
         for (int i = 1; i < graph.getVertices().size(); i++) {
 
@@ -77,7 +76,7 @@ public class RadialBasedAlgorithm {
         int numberOfVertices = graph.getVertices().size();
         boolean marked[] = new boolean[numberOfVertices];
         LinkedList<Vertex> queue = new LinkedList<>();
-        Graph tree = new Graph();
+        Graph tree = new Graph(numberOfVertices);
 
         marked[centralVertex.getIndex()] = true;
         queue.add(centralVertex);
@@ -129,12 +128,33 @@ public class RadialBasedAlgorithm {
     }
 
     private void countLeafsForAllVertices() {
-
-        System.out.println("COUNT LEAFS");
-        for (Vertex vertex : tree.getVertices()) {
-            int numberOfLeafs = vertex.countLeafs();
-            vertex.setNumberOfLeafs(numberOfLeafs);
+        for (Vertex vertex : graph.getVertices()){
+            int numberOfLeafs = countLeafs( vertex.getIndex() );
+            vertex.setNumberOfLeafs( numberOfLeafs );
         }
+    }
+
+    private int countLeafs(int index){
+
+        int numberOfLeafs = 0;
+        ArrayList<Integer> adjacentVertices = new ArrayList<>();
+
+        for (int i = 0; i < graph.getVertices().size(); i++){
+            if (graph.getEdgeFromIncidenceMatrix( index, i ) == 1){
+                adjacentVertices.add( i );
+            }
+        }
+
+        if (adjacentVertices.size() == 1){
+            return 1;
+        }
+        else
+        {
+            for( int vertex : adjacentVertices ){
+                numberOfLeafs += countLeafs( vertex );
+            }
+        }
+        return numberOfLeafs;
     }
 
     private void removeEdgesFromSpanningTree() {

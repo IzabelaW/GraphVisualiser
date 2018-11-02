@@ -1,3 +1,4 @@
+import algorithms.RadialBasedAlgorithm;
 import graph.Edge;
 import graph.Graph;
 import javafx.application.Application;
@@ -19,13 +20,13 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("fxml/sample.fxml"));
 
-        GraphGenerator graphGenerator = new GraphGenerator();
-        Graph graph = graphGenerator.generatePreferentialAttachementGraph(1000, 5);
+        GraphGenerator graphGenerator = new GraphGenerator(100);
+        Graph graph = graphGenerator.generateGNP( 0.01);
 
 //        GraphReader graphReader = new GraphReader();
 //        Graph graph = graphReader.readGraph();
-
-        Group root = draw(graph);
+        RadialBasedAlgorithm radialBasedAlgorithm = new RadialBasedAlgorithm(graph);
+        Group root = draw(radialBasedAlgorithm.doLogic());
 
         primaryStage.setTitle("Graph Visualiser");
         primaryStage.setScene(new Scene(root, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight()));

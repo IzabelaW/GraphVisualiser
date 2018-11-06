@@ -20,9 +20,9 @@ public class GraphGenerator {
 
 
     public GraphGenerator(int numberOfVertices){
-        random = new Random();
+        this.random = new Random();
         this.numberOfVertices = numberOfVertices;
-        initialGraph = new Graph(numberOfVertices);
+        this.initialGraph = new Graph(numberOfVertices);
     }
 
     public Graph generateGNP(double probability) throws FileNotFoundException, UnsupportedEncodingException {
@@ -58,19 +58,20 @@ public class GraphGenerator {
                     target.addEdge(edge);
 
                     initialGraph.addEdge(edge);
-                    initialGraph.addEdgeToIncidenceMatrix( source.getIndex(), target.getIndex() );
                 }
             }
         }
         return initialGraph;
     }
 
-    public Graph generatePreferentialAttachementGraph(int numberOfEdgesFromNewVertex) {
+    public Graph generatePreferentialAttachmentGraph(int numberOfEdgesFromNewVertex) {
 
         ArrayList<Vertex> addedVertices = new ArrayList<>();
-        ArrayList<Vertex> connected = new ArrayList<>();
+        ArrayList<Vertex> connected;
 
         Vertex initialVertex = new Vertex(numberOfEdgesFromNewVertex, random.nextDouble() * 1000, random.nextDouble() * 500);
+        initialGraph.addVertex(initialVertex);
+        addedVertices.add(initialVertex);
 
         for (int i = 0; i < numberOfEdgesFromNewVertex; i++){
             Vertex vertex = new Vertex(i, random.nextDouble() * 1000, random.nextDouble() * 500);
@@ -78,38 +79,44 @@ public class GraphGenerator {
             addedVertices.add(vertex);
             Edge edge = new Edge(initialVertex, vertex);
             initialGraph.addEdge(edge);
-            initialGraph.addEdgeToIncidenceMatrix( initialVertex.getIndex(), vertex.getIndex() );
             vertex.addEdge(edge);
             initialVertex.addEdge(edge);
         }
-        initialGraph.addVertex(initialVertex);
-        addedVertices.add(initialVertex);
 
-        for (int i = addedVertices.size(); i < numberOfVertices; i++) {
-            for (int j = 0; j < numberOfEdgesFromNewVertex; j++) {
+        for (Vertex vertex : addedVertices){
+            vertex.setProbability(((double) vertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2));
+        }
+
+
+        for (int i = numberOfEdgesFromNewVertex + 1; i < numberOfVertices; i++) {
+            Vertex vertex = new Vertex(i, random.nextDouble() * 1000, random.nextDouble() * 500);
+            initialGraph.addVertex(vertex);
+            int connections = 0;
+            connected = new ArrayList<>();
+            while (connections < numberOfEdgesFromNewVertex) {
                 for (Vertex addedVertex : addedVertices) {
-                    double probability = ((double) addedVertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2);
+                    double probability = addedVertex.getProbability();
 
                     if (random.nextDouble() <= probability) {
-                        Vertex vertex = new Vertex(i, random.nextDouble() * 1000, random.nextDouble() * 500);
                         Edge edge = new Edge(vertex, addedVertex);
 
-                        vertex.addEdgeWithoutIncreasingDegree(edge);
-                        addedVertex.addEdgeWithoutIncreasingDegree(edge);
-
+                        vertex.addEdge(edge);
+                        addedVertex.addEdge(edge);
                         initialGraph.addEdge(edge);
-                        initialGraph.addVertex(vertex);
-                        initialGraph.addEdgeToIncidenceMatrix( vertex.getIndex(), addedVertex.getIndex() );
 
                         connected.add(addedVertex);
+                        connections++;
                         break;
                     }
                 }
             }
 
-            for(Vertex vertex : connected){
-                vertex.setDegree(vertex.getEdges().size());
-                addedVertices.add(vertex);
+            for(Vertex connectedVertex : connected){
+                addedVertices.add(connectedVertex);
+            }
+
+            for (Vertex addedVertex : addedVertices){
+                vertex.setProbability(((double) addedVertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2));
             }
         }
 

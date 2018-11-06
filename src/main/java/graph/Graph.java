@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by izabelawojciak on 15/10/2018.
@@ -9,17 +10,21 @@ public class Graph {
 
     private ArrayList<Vertex> vertices;
     private ArrayList<Edge> edges;
-    private int[][] incidenceMatrix;
+    private Edge[][] incidenceMatrix;
+    private Vertex centralVertex;
 
     public Graph(int numberOfVertices) {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
-        incidenceMatrix = new int[numberOfVertices][numberOfVertices];
+        incidenceMatrix = new Edge[numberOfVertices][numberOfVertices];
     }
 
     public void addEdge(Edge edge) {
-        if (!edges.contains(edge))
+        if (!edges.contains(edge)) {
             edges.add(edge);
+            incidenceMatrix[edge.getSource().getIndex()][edge.getTarget().getIndex()] = edge;
+            incidenceMatrix[edge.getTarget().getIndex()][edge.getSource().getIndex()] = edge;
+        }
     }
 
     public void addVertex(Vertex vertex) {
@@ -48,29 +53,53 @@ public class Graph {
         return null;
     }
 
-    public Vertex findCentralVertex() {
+    public void findCentralVertex() {
 
         System.out.println("FIND CENTRAL VERTEX");
 
-        int maxDegree = 0;
-        Vertex centralVertex = null;
+        int maxLevel = 0;
+        LinkedList<Vertex> queue = new LinkedList<>();
+        int degree[] = new int[vertices.size()];
+        int level[] = new int[vertices.size()];
 
-        for (Vertex vertex : vertices) {
-            if (vertex.getDegree() > maxDegree) {
-                maxDegree = vertex.getDegree();
-                centralVertex = vertex;
+        for(Vertex vertex : vertices){
+            degree[vertex.getIndex()] = vertex.getDegree();
+        }
+
+        for (Vertex vertex : vertices){
+            if(degree[vertex.getIndex()] == 1) {
+                queue.add(vertex);
+                level[vertex.getIndex()] = 0;
             }
         }
 
-        return vertices.get( 0 );
+        while (queue.size() != 0){
+            Vertex vertex = queue.poll();
+
+            for (Vertex adjacentVertex : vertices){
+                if (incidenceMatrix[vertex.getIndex()][adjacentVertex.getIndex()] != null) {
+                    degree[adjacentVertex.getIndex()]--;
+
+                    if (degree[adjacentVertex.getIndex()] == 1){
+                        queue.push(adjacentVertex);
+                        level[adjacentVertex.getIndex()] = level[vertex.getIndex()] + 1;
+
+                        if (level[adjacentVertex.getIndex()] > maxLevel) {
+                            maxLevel = level[adjacentVertex.getIndex()];
+                            this.centralVertex = adjacentVertex;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    public void addEdgeToIncidenceMatrix(int source, int target){
-        incidenceMatrix[source][target] = 1;
-    }
-
-    public int getEdgeFromIncidenceMatrix(int source, int target){
+    public Edge getEdgeFromIncidenceMatrix(int source, int target){
         return incidenceMatrix[source][target];
+    }
+
+    public Vertex getCentralVertex() {
+        return centralVertex;
     }
 }
 

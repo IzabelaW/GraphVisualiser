@@ -20,11 +20,11 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("fxml/sample.fxml"));
 
-        GraphGenerator graphGenerator = new GraphGenerator(100);
-        Graph graph = graphGenerator.generateGNP( 0.01);
+//        GraphGenerator graphGenerator = new GraphGenerator(1000);
+//        Graph graph = graphGenerator.generatePreferentialAttachmentGraph(2);
 
-//        GraphReader graphReader = new GraphReader();
-//        Graph graph = graphReader.readGraph();
+        GraphReader graphReader = new GraphReader();
+        Graph graph = graphReader.readGraph();
         RadialBasedAlgorithm radialBasedAlgorithm = new RadialBasedAlgorithm(graph);
         Group root = draw(radialBasedAlgorithm.doLogic());
 

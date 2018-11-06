@@ -17,6 +17,7 @@ public class Vertex {
     private ArrayList<Vertex> children;
     private int numberOfLeafs;
     private double angle;
+    private double probability;
 
 
     public Vertex(int index, double x, double y) {
@@ -55,14 +56,6 @@ public class Vertex {
     public void addEdge(Edge edge){
         edges.add(edge);
         degree++;
-    }
-
-    public void addEdgeWithoutIncreasingDegree(Edge edge){
-        edges.add(edge);
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public int getIndex() {
@@ -113,7 +106,11 @@ public class Vertex {
         this.numberOfLeafs = numberOfLeafs;
     }
 
-    public void setDegree(int degree) {
-        this.degree = degree;
+    public double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 }

@@ -20,24 +20,23 @@ public class RadialBasedAlgorithm {
 
     public RadialBasedAlgorithm(Graph graph) {
         this.graph = graph;
-        removedEdges = new ArrayList<>();
-        radialQueue = new LinkedList<>();
     }
 
     public Graph doLogic() {
         BFS(graph.getVertex(0));
         removeEdgesFromSpanningTree();
         tree.findCentralVertex();
-        Vertex centralVertex = graph.getCentralVertex();
+        Vertex centralVertex = tree.getCentralVertex();
+        int depth = tree.getDepth();
+
+        addRemovedEdgesToSpanningTree();
         BFS(centralVertex);
         removeEdgesFromSpanningTree();
         countLeafsForAllVertices();
 
-        System.out.println("ALGO");
-
-        double screenWidth = Screen.getPrimary().getBounds().getWidth() - 200;
-        double screenHeight = Screen.getPrimary().getBounds().getHeight() - 200;
-        double R = Math.min(screenWidth, screenHeight) / 10;
+        double screenWidth = Screen.getPrimary().getBounds().getWidth();
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        double R = 0.95 * (Math.min(screenWidth, screenHeight) / ((double) 2 * depth));
         double arc;
         double parentArc;
         double lastAngle = 0;
@@ -48,24 +47,22 @@ public class RadialBasedAlgorithm {
         centralVertex.setAngle(Math.PI / 2);
 
         Vertex previousVertex = radialQueue.poll();
-        System.out.println("QUEUE: " + radialQueue.size());
-        System.out.println("VERTICES: " + graph.getVertices().size());
-        for (int i = 1; i < graph.getVertices().size(); i++) {
+        for (int i = 1; i < tree.getVertices().size(); i++) {
 
             Vertex vertex = radialQueue.poll();
             Vertex parentVertex = vertex.getParent();
 
-            arc = (vertex.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
-            parentArc = (parentVertex.getNumberOfLeafs() * 2 * Math.PI) / centralVertex.getNumberOfLeafs();
+            arc = ((double) vertex.getNumberOfLeafs() * 2 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
+            parentArc = ((double) parentVertex.getNumberOfLeafs() * 2 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
 
             if (!parentVertex.equals(previousVertex.getParent())) {
-                vertex.setAngle(parentVertex.getAngle() - parentArc / 2 + arc / 2);
+                vertex.setAngle(parentVertex.getAngle() - (parentArc / 2) + (arc / 2));
             } else {
-                vertex.setAngle(lastAngle + lastArc / 2 + arc / 2);
+                vertex.setAngle(lastAngle + (lastArc / 2) + (arc / 2));
             }
 
-            vertex.setX(centralVertex.getX() + R * vertex.getLevel() * Math.cos(vertex.getAngle()));
-            vertex.setY(centralVertex.getY() + R * vertex.getLevel() * Math.sin(vertex.getAngle()));
+            vertex.setX(centralVertex.getX() + (R * vertex.getLevel() * Math.cos(vertex.getAngle())));
+            vertex.setY(centralVertex.getY() + (R * vertex.getLevel() * Math.sin(vertex.getAngle())));
 
             lastAngle = vertex.getAngle();
             lastArc = arc;
@@ -80,12 +77,12 @@ public class RadialBasedAlgorithm {
 
     private void BFS(Vertex centralVertex) {
 
-        System.out.println("BFS");
-
         int numberOfVertices = graph.getVertices().size();
         boolean marked[] = new boolean[numberOfVertices];
         LinkedList<Vertex> queue = new LinkedList<>();
         tree = new Graph(numberOfVertices);
+        removedEdges = new ArrayList<>();
+        radialQueue = new LinkedList<>();
 
         marked[centralVertex.getIndex()] = true;
         queue.add(centralVertex);
@@ -94,6 +91,7 @@ public class RadialBasedAlgorithm {
         int level = 1;
         while (queue.size() != 0) {
             Vertex currentVertex = queue.poll();
+
             radialQueue.add(currentVertex);
             tree.addVertex(currentVertex);
 
@@ -110,42 +108,42 @@ public class RadialBasedAlgorithm {
                     marked[adjacentVertex.getIndex()] = true;
                     adjacentVertex.setParent(currentVertex);
                     currentVertex.addChild(adjacentVertex);
-                    queue.add(adjacentVertex);
+                    queue.addLast(adjacentVertex);
+                    level = adjacentVertex.getParent().getLevel() + 1;
                     adjacentVertex.setLevel(level);
                     tree.addEdge(edge);
                 }
             }
-            level++;
         }
+
+        tree.setDepth(level);
     }
 
     private void countLeafsForAllVertices() {
-        for (Vertex vertex : tree.getVertices()){
-            int numberOfLeafs = countLeafs( vertex );
-            vertex.setNumberOfLeafs( numberOfLeafs );
+        for (Vertex vertex : tree.getVertices()) {
+            int numberOfLeafs = countLeafs(vertex);
+            vertex.setNumberOfLeafs(numberOfLeafs);
         }
     }
 
-    private int countLeafs(Vertex rootVertex){
+    private int countLeafs(Vertex rootVertex) {
 
         int numberOfLeafs = 0;
         ArrayList<Vertex> adjacentVertices = new ArrayList<>();
 
         for (Vertex vertex : tree.getVertices()) {
-            if (tree.getEdgeFromIncidenceMatrix( rootVertex.getIndex(), vertex.getIndex() ) != null){
-                adjacentVertices.add( vertex );
+            if (tree.getEdgeFromIncidenceMatrix(rootVertex.getIndex(), vertex.getIndex()) != null) {
+                adjacentVertices.add(vertex);
             }
         }
 
 
-        if (adjacentVertices.size() == 1 && !adjacentVertices.get(0).equals(tree.getCentralVertex()) && !rootVertex.equals(adjacentVertices.get(0).getParent())){
+        if (adjacentVertices.size() == 1 && !adjacentVertices.get(0).equals(tree.getCentralVertex()) && !rootVertex.equals(adjacentVertices.get(0).getParent())) {
             return 1;
-        }
-        else
-        {
-            for( Vertex adjacentVertex : adjacentVertices ){
+        } else {
+            for (Vertex adjacentVertex : adjacentVertices) {
                 if (rootVertex.getParent() == null || !rootVertex.getParent().equals(adjacentVertex))
-                    numberOfLeafs += countLeafs( adjacentVertex );
+                    numberOfLeafs += countLeafs(adjacentVertex);
             }
             return numberOfLeafs;
         }
@@ -153,26 +151,20 @@ public class RadialBasedAlgorithm {
 
     private void removeEdgesFromSpanningTree() {
 
-        System.out.println("REMOVE EDGES");
-        ArrayList<Edge> edges;
-        for (Vertex vertex : tree.getVertices()) {
-            edges = new ArrayList<>(vertex.getEdges());
-            for (Edge edge : edges) {
-                if (!tree.getEdges().contains(edge) && !removedEdges.contains(edge)) {
-                    vertex.removeEdge(edge);
-                    removedEdges.add(edge);
-                }
+        for (Edge edge : graph.getEdges()) {
+            if (!tree.getEdges().contains(edge) && !removedEdges.contains(edge)) {
+                edge.getSource().removeEdge(edge);
+                edge.getTarget().removeEdge(edge);
+                removedEdges.add(edge);
             }
         }
     }
 
     private void addRemovedEdgesToSpanningTree() {
 
-        System.out.println("ADD EDGES");
         for (Edge edge : removedEdges) {
             tree.addEdge(edge);
         }
-        System.out.println(removedEdges.size());
 
     }
 

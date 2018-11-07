@@ -10,7 +10,6 @@ public class Vertex {
     private int index;
     private double x;
     private double y;
-    private int degree;
     private ArrayList<Edge> edges;
     private int level;
     private Vertex parent;
@@ -20,10 +19,8 @@ public class Vertex {
     private double probability;
 
 
-    public Vertex(int index, double x, double y) {
+    public Vertex(int index) {
         this.index = index;
-        this.x = x;
-        this.y = y;
         edges = new ArrayList<>();
         children = new ArrayList<>();
     }
@@ -46,16 +43,15 @@ public class Vertex {
     }
 
     public int getDegree() {
-        return degree;
+        return edges.size();
     }
 
     public ArrayList<Edge> getEdges() {
         return edges;
     }
 
-    public void addEdge(Edge edge){
+    public void addEdge(Edge edge) {
         edges.add(edge);
-        degree++;
     }
 
     public int getIndex() {
@@ -96,10 +92,6 @@ public class Vertex {
 
     public void addChild(Vertex child) {
         children.add(child);
-    }
-
-    public ArrayList<Vertex> getChildren() {
-        return children;
     }
 
     public void setNumberOfLeafs(int numberOfLeafs) {

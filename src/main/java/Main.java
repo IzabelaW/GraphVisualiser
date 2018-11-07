@@ -7,24 +7,25 @@ import javafx.scene.Scene;
 import javafx.scene.shape.Line;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
 /**
  * Created by izabelawojciak on 16/10/2018.
  */
-public class Main extends Application{
+public class Main extends Application {
 
-    public static void main (String[] args){
+    public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("fxml/sample.fxml"));
+//
+        GraphGenerator graphGenerator = new GraphGenerator(3000);
+        Graph graph = graphGenerator.generatePreferentialAttachmentGraph(2);
 
-//        GraphGenerator graphGenerator = new GraphGenerator(1000);
-//        Graph graph = graphGenerator.generatePreferentialAttachmentGraph(2);
-
-        GraphReader graphReader = new GraphReader();
-        Graph graph = graphReader.readGraph();
+//        GraphReader graphReader = new GraphReader();
+//        Graph graph = graphReader.readGraph();
         RadialBasedAlgorithm radialBasedAlgorithm = new RadialBasedAlgorithm(graph);
         Group root = draw(radialBasedAlgorithm.doLogic());
 
@@ -36,12 +37,10 @@ public class Main extends Application{
 
     private Group draw(Graph graph) {
 
-        System.out.println("DRAW");
-
         Group group = new Group();
 
         for (Edge edge : graph.getEdges()) {
-            Line line  = new Line();
+            Line line = new Line();
 
             line.setStartX(edge.getSource().getX());
             line.setStartY(edge.getSource().getY());

@@ -27,31 +27,26 @@ public class GraphReader {
     public Graph readGraph() throws FileNotFoundException, UnsupportedEncodingException {
 
         Random random = new Random();
-
-        System.out.println("READ GRAPH");
-
         Graph graph = new Graph(scanner.nextInt());
 
-        while(scanner.hasNextInt()){
+        while (scanner.hasNextInt()) {
             Vertex source;
             Vertex target;
 
             int sourceIndex = scanner.nextInt();
             int targetIndex = scanner.nextInt();
 
-            if(graph.containsVertex(sourceIndex)){
+            if (graph.containsVertex(sourceIndex)) {
                 source = graph.getVertex(sourceIndex);
-            }
-            else {
-                source = new Vertex(sourceIndex, random.nextDouble() * 1000, random.nextDouble() * 500);
+            } else {
+                source = new Vertex(sourceIndex);
                 graph.addVertex(source);
             }
 
-            if (graph.containsVertex(targetIndex)){
+            if (graph.containsVertex(targetIndex)) {
                 target = graph.getVertex(targetIndex);
-            }
-            else {
-                target = new Vertex(targetIndex, random.nextDouble() * 1000, random.nextDouble() * 500);
+            } else {
+                target = new Vertex(targetIndex);
                 graph.addVertex(target);
             }
 
@@ -63,8 +58,6 @@ public class GraphReader {
             graph.addEdge(edge);
         }
 
-
-        System.out.println(graph.getEdges().size());
         return graph;
     }
 }

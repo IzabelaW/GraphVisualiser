@@ -12,6 +12,7 @@ public class Graph {
     private ArrayList<Edge> edges;
     private Edge[][] incidenceMatrix;
     private Vertex centralVertex;
+    private int depth;
 
     public Graph(int numberOfVertices) {
         vertices = new ArrayList<>();
@@ -55,33 +56,32 @@ public class Graph {
 
     public void findCentralVertex() {
 
-        System.out.println("FIND CENTRAL VERTEX");
-
         int maxLevel = 0;
         LinkedList<Vertex> queue = new LinkedList<>();
         int degree[] = new int[vertices.size()];
         int level[] = new int[vertices.size()];
 
-        for(Vertex vertex : vertices){
+        for (Vertex vertex : vertices) {
             degree[vertex.getIndex()] = vertex.getDegree();
+            level[vertex.getIndex()] = 0;
         }
 
-        for (Vertex vertex : vertices){
-            if(degree[vertex.getIndex()] == 1) {
+        for (Vertex vertex : vertices) {
+            if (degree[vertex.getIndex()] == 1) {
                 queue.add(vertex);
                 level[vertex.getIndex()] = 0;
             }
         }
 
-        while (queue.size() != 0){
+        while (queue.size() != 0) {
             Vertex vertex = queue.poll();
 
-            for (Vertex adjacentVertex : vertices){
+            for (Vertex adjacentVertex : vertices) {
                 if (incidenceMatrix[vertex.getIndex()][adjacentVertex.getIndex()] != null) {
                     degree[adjacentVertex.getIndex()]--;
 
-                    if (degree[adjacentVertex.getIndex()] == 1){
-                        queue.push(adjacentVertex);
+                    if (degree[adjacentVertex.getIndex()] == 1) {
+                        queue.addLast(adjacentVertex);
                         level[adjacentVertex.getIndex()] = level[vertex.getIndex()] + 1;
 
                         if (level[adjacentVertex.getIndex()] > maxLevel) {
@@ -94,12 +94,20 @@ public class Graph {
         }
     }
 
-    public Edge getEdgeFromIncidenceMatrix(int source, int target){
+    public Edge getEdgeFromIncidenceMatrix(int source, int target) {
         return incidenceMatrix[source][target];
     }
 
     public Vertex getCentralVertex() {
         return centralVertex;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth){
+        this.depth = depth;
     }
 }
 

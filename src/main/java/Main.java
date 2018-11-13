@@ -1,10 +1,9 @@
+import algorithms.Algorithm;
 import algorithms.RadialBasedAlgorithm;
-import graph.Edge;
 import graph.Graph;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.shape.Line;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -13,43 +12,64 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
+    private boolean generateRandomGraph;
+    private boolean erdosRenyiModel;
+    private int numberOfVertices;
+    private double probability;
+    private int numberOfConnections;
+    private String filePath;
+    private int algorithmIndex;
+
+    public Main(boolean generateRandomGraph, boolean erdosRenyiModel, int numberOfVertices, double probability, int numberOfConnections, String filePath, int algorithmIndex) {
+        this.generateRandomGraph = generateRandomGraph;
+        this.erdosRenyiModel = erdosRenyiModel;
+        this.numberOfVertices = numberOfVertices;
+        this.probability = probability;
+        this.numberOfConnections = numberOfConnections;
+        this.filePath = filePath;
+        this.algorithmIndex = algorithmIndex;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("fxml/sample.fxml"));
-//
-        GraphGenerator graphGenerator = new GraphGenerator(3000);
-        Graph graph = graphGenerator.generatePreferentialAttachmentGraph(2);
 
-//        GraphReader graphReader = new GraphReader();
-//        Graph graph = graphReader.readGraph();
-        RadialBasedAlgorithm radialBasedAlgorithm = new RadialBasedAlgorithm(graph);
-        Group root = draw(radialBasedAlgorithm.doLogic());
+        Graph graph;
 
-        primaryStage.setTitle("Graph Visualiser");
-        primaryStage.setScene(new Scene(root, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight()));
-        primaryStage.show();
-    }
+        if (generateRandomGraph) {
+            GraphGenerator graphGenerator = new GraphGenerator(numberOfVertices);
 
-
-    private Group draw(Graph graph) {
-
-        Group group = new Group();
-
-        for (Edge edge : graph.getEdges()) {
-            Line line = new Line();
-
-            line.setStartX(edge.getSource().getX());
-            line.setStartY(edge.getSource().getY());
-
-            line.setEndX(edge.getTarget().getX());
-            line.setEndY(edge.getTarget().getY());
-
-            group.getChildren().add(line);
+            if (erdosRenyiModel) {
+                graph = graphGenerator.generateGNP(probability);
+            }
+            else {
+                graph = graphGenerator.generatePreferentialAttachmentGraph(numberOfConnections);
+            }
         }
-        return group;
+        else {
+            GraphReader graphReader = new GraphReader(filePath);
+            graph = graphReader.readGraph();
+        }
+
+        Algorithm algorithm;
+        switch (algorithmIndex) {
+            case 0:
+                algorithm = new RadialBasedAlgorithm(graph);
+                break;
+            default:
+                algorithm = new RadialBasedAlgorithm(graph);
+                break;
+        }
+
+        BorderPane root = new BorderPane();
+        root.setCenter(algorithm.doLogic().getScrollPane());
+
+        Scene scene = new Scene(root, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Graph Visualiser");
+        primaryStage.show();
     }
 }

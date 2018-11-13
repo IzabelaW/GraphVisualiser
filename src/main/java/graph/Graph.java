@@ -1,5 +1,8 @@
 package graph;
 
+import javafx.scene.Group;
+import javafx.scene.control.ScrollPane;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -13,11 +16,22 @@ public class Graph {
     private Edge[][] incidenceMatrix;
     private Vertex centralVertex;
     private int depth;
+    private Group canvas;
+    private ScrollPane scrollPane;
 
     public Graph(int numberOfVertices) {
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
         incidenceMatrix = new Edge[numberOfVertices][numberOfVertices];
+        canvas = new Group();
+        scrollPane = new ScrollPane(canvas);
+
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+    }
+//
+    public ScrollPane getScrollPane() {
+        return this.scrollPane;
     }
 
     public void addEdge(Edge edge) {
@@ -25,12 +39,15 @@ public class Graph {
             edges.add(edge);
             incidenceMatrix[edge.getSource().getIndex()][edge.getTarget().getIndex()] = edge;
             incidenceMatrix[edge.getTarget().getIndex()][edge.getSource().getIndex()] = edge;
+            canvas.getChildren().add(edge);
         }
     }
 
     public void addVertex(Vertex vertex) {
-        if (!vertices.contains(vertex))
+        if (!vertices.contains(vertex)) {
             vertices.add(vertex);
+            canvas.getChildren().add(vertex);
+        }
     }
 
     public ArrayList<Vertex> getVertices() {
@@ -109,5 +126,9 @@ public class Graph {
     public void setDepth(int depth){
         this.depth = depth;
     }
+//
+//    public double getScale() {
+//        return this.scrollPane.getScaleValue();
+//    }
 }
 

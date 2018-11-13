@@ -61,7 +61,6 @@ public class GraphGenerator {
     public Graph generatePreferentialAttachmentGraph(int numberOfEdgesFromNewVertex) {
 
         ArrayList<Vertex> addedVertices = new ArrayList<>();
-        ArrayList<Vertex> connected;
 
         for (int i = 0; i <= numberOfEdgesFromNewVertex; i++) {
             for (int j = i + 1; j <= numberOfEdgesFromNewVertex; j++) {
@@ -93,7 +92,7 @@ public class GraphGenerator {
         }
 
         for (Vertex vertex : addedVertices) {
-            vertex.setProbability(((double) vertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2));
+            vertex.setProbability(((double) vertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2.0));
         }
 
 
@@ -121,7 +120,7 @@ public class GraphGenerator {
             addedVertices.add(vertex);
 
             for (Vertex addedVertex : addedVertices) {
-                vertex.setProbability(((double) addedVertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2));
+                vertex.setProbability(((double) addedVertex.getDegree()) / ((double) initialGraph.getEdges().size() * 2.0));
             }
         }
 

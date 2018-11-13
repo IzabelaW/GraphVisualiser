@@ -11,7 +11,7 @@ import java.util.LinkedList;
 /**
  * Created by izabelawojciak on 17/10/2018.
  */
-public class RadialBasedAlgorithm {
+public class RadialBasedAlgorithm implements Algorithm {
 
     private Graph graph;
     private Graph tree;
@@ -36,29 +36,29 @@ public class RadialBasedAlgorithm {
 
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        double R = 0.95 * (Math.min(screenWidth, screenHeight) / ((double) 2 * depth));
+        double R = 0.95 * (Math.min(screenWidth, screenHeight) / (2.0 * (double) depth));
         double arc;
         double parentArc;
         double lastAngle = 0;
         double lastArc = 0;
 
-        centralVertex.setX(screenWidth / 2);
-        centralVertex.setY(screenHeight / 2);
-        centralVertex.setAngle(Math.PI / 2);
+        centralVertex.setX(screenWidth / 2.0);
+        centralVertex.setY(screenHeight / 2.0);
+        centralVertex.setAngle(Math.PI / 2.0);
 
         Vertex previousVertex = radialQueue.poll();
         for (int i = 1; i < tree.getVertices().size(); i++) {
 
             Vertex vertex = radialQueue.poll();
-            Vertex parentVertex = vertex.getParent();
+            Vertex parentVertex = vertex.getVertexParent();
 
-            arc = ((double) vertex.getNumberOfLeafs() * 2 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
-            parentArc = ((double) parentVertex.getNumberOfLeafs() * 2 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
+            arc = ((double) vertex.getNumberOfLeafs() * 2.0 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
+            parentArc = ((double) parentVertex.getNumberOfLeafs() * 2.0 * Math.PI) / ((double) centralVertex.getNumberOfLeafs());
 
-            if (!parentVertex.equals(previousVertex.getParent())) {
-                vertex.setAngle(parentVertex.getAngle() - (parentArc / 2) + (arc / 2));
+            if (!parentVertex.equals(previousVertex.getVertexParent())) {
+                vertex.setAngle(parentVertex.getAngle() - (parentArc / 2.0) + (arc / 2.0));
             } else {
-                vertex.setAngle(lastAngle + (lastArc / 2) + (arc / 2));
+                vertex.setAngle(lastAngle + (lastArc / 2.0) + (arc / 2.0));
             }
 
             vertex.setX(centralVertex.getX() + (R * vertex.getLevel() * Math.cos(vertex.getAngle())));
@@ -70,7 +70,15 @@ public class RadialBasedAlgorithm {
         }
 
 
-        addRemovedEdgesToSpanningTree();
+//        addRemovedEdgesToSpanningTree();
+
+        for (Edge edge : tree.getEdges()){
+            edge.setView();
+        }
+
+        for (Vertex vertex : tree.getVertices()){
+            vertex.setView(tree.getEdges().size());
+        }
 
         return tree;
     }
@@ -109,7 +117,7 @@ public class RadialBasedAlgorithm {
                     adjacentVertex.setParent(currentVertex);
                     currentVertex.addChild(adjacentVertex);
                     queue.addLast(adjacentVertex);
-                    level = adjacentVertex.getParent().getLevel() + 1;
+                    level = adjacentVertex.getVertexParent().getLevel() + 1;
                     adjacentVertex.setLevel(level);
                     tree.addEdge(edge);
                 }
@@ -138,11 +146,11 @@ public class RadialBasedAlgorithm {
         }
 
 
-        if (adjacentVertices.size() == 1 && !adjacentVertices.get(0).equals(tree.getCentralVertex()) && !rootVertex.equals(adjacentVertices.get(0).getParent())) {
+        if (adjacentVertices.size() == 1 && !adjacentVertices.get(0).equals(tree.getCentralVertex()) && !rootVertex.equals(adjacentVertices.get(0).getVertexParent())) {
             return 1;
         } else {
             for (Vertex adjacentVertex : adjacentVertices) {
-                if (rootVertex.getParent() == null || !rootVertex.getParent().equals(adjacentVertex))
+                if (rootVertex.getVertexParent() == null || !rootVertex.getVertexParent().equals(adjacentVertex))
                     numberOfLeafs += countLeafs(adjacentVertex);
             }
             return numberOfLeafs;
@@ -167,5 +175,4 @@ public class RadialBasedAlgorithm {
         }
 
     }
-
 }

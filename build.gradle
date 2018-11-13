@@ -25,7 +25,7 @@ apply plugin: 'javafx-gradle-plugin'
 
 jfx {
     // minimal requirement for jfxJar-task
-    mainClass = 'src.main.java.Main'
+    mainClass = 'src.main.java.StartDialog'
 
     // minimal requirement for jfxNative-task
     vendor = 'Izabela Wójciak'

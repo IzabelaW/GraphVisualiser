@@ -1,11 +1,15 @@
 package graph;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 import java.util.ArrayList;
 
 /**
  * Created by izabelawojciak on 15/10/2018.
  */
-public class Vertex {
+public class Vertex extends Pane {
 
     private int index;
     private double x;
@@ -17,12 +21,15 @@ public class Vertex {
     private int numberOfLeafs;
     private double angle;
     private double probability;
+    private Circle view;
 
 
     public Vertex(int index) {
         this.index = index;
         edges = new ArrayList<>();
         children = new ArrayList<>();
+
+        view = new Circle();
     }
 
 
@@ -74,7 +81,7 @@ public class Vertex {
         return numberOfLeafs;
     }
 
-    public Vertex getParent() {
+    public Vertex getVertexParent() {
         return parent;
     }
 
@@ -104,5 +111,60 @@ public class Vertex {
 
     public void setProbability(double probability) {
         this.probability = probability;
+    }
+
+    public void setView(int numberOfEdges){
+        double size = 500.0 * (edges.size() / (2.0 * numberOfEdges));
+
+        System.out.println(edges.size());
+
+        view.setCenterX(x);
+        view.setCenterY(y);
+        view.setRadius(size);
+
+        setColor();
+        getChildren().add(view);
+    }
+
+    private void setColor(){
+
+        Color color;
+        int degree = edges.size();
+
+        if (degree <= 10)
+            color = Color.DARKBLUE;
+        else if (degree <= 20)
+            color = Color.MEDIUMBLUE;
+        else if (degree <= 30)
+            color = Color.ROYALBLUE;
+        else if (degree <= 40)
+            color = Color.DODGERBLUE;
+        else if (degree <= 50)
+            color = Color.FORESTGREEN;
+        else if (degree <= 60)
+            color = Color.OLIVEDRAB;
+        else if (degree <= 70)
+            color = Color.DARKKHAKI;
+        else if (degree <= 80)
+            color = Color.YELLOWGREEN;
+        else if (degree <= 90)
+            color = Color.KHAKI;
+        else if (degree <= 100)
+            color = Color.GOLD;
+        else if (degree <= 110)
+            color = Color.YELLOW;
+        else if (degree <= 120)
+            color = Color.LIGHTSALMON;
+        else if (degree <= 130)
+            color = Color.ORANGE;
+        else if (degree <= 140)
+            color = Color.DARKORANGE;
+        else if (degree <= 150)
+            color = Color.ORANGERED;
+        else
+            color = Color.RED;
+
+        view.setStroke(color);
+        view.setFill(color);
     }
 }

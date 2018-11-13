@@ -16,9 +16,9 @@ public class GraphReader {
 
     private Scanner scanner;
 
-    public GraphReader() {
+    public GraphReader(String filePath) {
         try {
-            scanner = new Scanner(new File("facebook_combined.txt"));
+            scanner = new Scanner(new File(filePath));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

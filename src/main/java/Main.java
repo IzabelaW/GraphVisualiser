@@ -3,9 +3,11 @@ import algorithms.RadialBasedAlgorithm;
 import graph.Graph;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
 
 /**
  * Created by izabelawojciak on 16/10/2018.
@@ -37,35 +39,41 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Graph graph;
+        Graph initialGraph;
+        Graph finalGraph;
 
         if (generateRandomGraph) {
             GraphGenerator graphGenerator = new GraphGenerator(numberOfVertices);
 
             if (erdosRenyiModel) {
-                graph = graphGenerator.generateGNP(probability);
+                initialGraph = graphGenerator.generateGNP(probability);
             }
             else {
-                graph = graphGenerator.generatePreferentialAttachmentGraph(numberOfConnections);
+                initialGraph = graphGenerator.generatePreferentialAttachmentGraph(numberOfConnections);
             }
         }
         else {
             GraphReader graphReader = new GraphReader(filePath);
-            graph = graphReader.readGraph();
+            initialGraph = graphReader.readGraph();
         }
 
         Algorithm algorithm;
         switch (algorithmIndex) {
             case 0:
-                algorithm = new RadialBasedAlgorithm(graph);
+                algorithm = new RadialBasedAlgorithm(initialGraph);
                 break;
             default:
-                algorithm = new RadialBasedAlgorithm(graph);
+                algorithm = new RadialBasedAlgorithm(initialGraph);
                 break;
         }
 
         BorderPane root = new BorderPane();
-        root.setCenter(algorithm.doLogic().getScrollPane());
+
+
+        finalGraph = algorithm.doLogic();
+        finalGraph.draw();
+
+        root.setCenter(finalGraph.getScrollPane());
 
         Scene scene = new Scene(root, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
         primaryStage.setScene(scene);

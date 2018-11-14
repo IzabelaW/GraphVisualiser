@@ -17,7 +17,6 @@ public class Edge extends Group {
         this.target = target;
 
         line = new Line();
-        getChildren().add(line);
     }
 
     public Vertex getSource() {
@@ -35,5 +34,7 @@ public class Edge extends Group {
         line.setEndX(target.getX());
         line.setEndY(target.getY());
         line.setStrokeWidth(0.2);
+
+        getChildren().add(line);
     }
 }

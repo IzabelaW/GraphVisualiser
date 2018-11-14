@@ -2,6 +2,7 @@ import algorithms.RadialBasedAlgorithm;
 import graph.Edge;
 import graph.Graph;
 import graph.Vertex;
+import javafx.scene.control.Alert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,12 @@ public class GraphReader {
         try {
             scanner = new Scanner(new File(filePath));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("File not found");
+            alert.setContentText("Insert correct path to the file!");
+
+            alert.showAndWait();
         }
     }
 

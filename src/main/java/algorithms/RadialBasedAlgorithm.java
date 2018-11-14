@@ -16,6 +16,7 @@ public class RadialBasedAlgorithm implements Algorithm {
     private Graph graph;
     private Graph tree;
     private ArrayList<Edge> removedEdges;
+    private ArrayList<Edge> addedEdges;
     private LinkedList<Vertex> radialQueue;
 
     public RadialBasedAlgorithm(Graph graph) {
@@ -72,14 +73,6 @@ public class RadialBasedAlgorithm implements Algorithm {
 
 //        addRemovedEdgesToSpanningTree();
 
-        for (Edge edge : tree.getEdges()){
-            edge.setView();
-        }
-
-        for (Vertex vertex : tree.getVertices()){
-            vertex.setView(tree.getEdges().size());
-        }
-
         return tree;
     }
 
@@ -90,6 +83,7 @@ public class RadialBasedAlgorithm implements Algorithm {
         LinkedList<Vertex> queue = new LinkedList<>();
         tree = new Graph(numberOfVertices);
         removedEdges = new ArrayList<>();
+        addedEdges = new ArrayList<>();
         radialQueue = new LinkedList<>();
 
         marked[centralVertex.getIndex()] = true;
@@ -119,7 +113,7 @@ public class RadialBasedAlgorithm implements Algorithm {
                     queue.addLast(adjacentVertex);
                     level = adjacentVertex.getVertexParent().getLevel() + 1;
                     adjacentVertex.setLevel(level);
-                    tree.addEdge(edge);
+                    addedEdges.add(edge);
                 }
             }
         }
@@ -160,10 +154,13 @@ public class RadialBasedAlgorithm implements Algorithm {
     private void removeEdgesFromSpanningTree() {
 
         for (Edge edge : graph.getEdges()) {
-            if (!tree.getEdges().contains(edge) && !removedEdges.contains(edge)) {
+            if (!addedEdges.contains(edge) && !removedEdges.contains(edge)) {
                 edge.getSource().removeEdge(edge);
                 edge.getTarget().removeEdge(edge);
                 removedEdges.add(edge);
+            }
+            else if (addedEdges.contains(edge)){
+                tree.addEdge(edge);
             }
         }
     }

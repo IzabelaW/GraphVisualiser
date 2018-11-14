@@ -2,6 +2,7 @@ package graph;
 
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
+import javafx.stage.Screen;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,7 +30,7 @@ public class Graph {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
     }
-//
+
     public ScrollPane getScrollPane() {
         return this.scrollPane;
     }
@@ -125,6 +126,38 @@ public class Graph {
 
     public void setDepth(int depth){
         this.depth = depth;
+    }
+
+    private int getMaxDegree() {
+        int maxDegree = 0;
+
+        for (Vertex vertex : vertices){
+            if (vertex.getDegree() > maxDegree)
+                maxDegree = vertex.getDegree();
+        }
+
+        return maxDegree;
+    }
+
+    public void draw() {
+
+        double screenWidth = Screen.getPrimary().getBounds().getWidth();
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        double factor = Math.min(screenWidth, screenHeight) / depth;
+
+        int maxDegree = getMaxDegree();
+        int step = maxDegree / 7;
+        double size;
+
+        for (Vertex vertex : vertices){
+            size = factor * (vertex.getDegree() / (2.0 * edges.size()));
+            vertex.setView(size, step);
+        }
+
+        for (Edge edge : edges){
+            edge.setView();
+        }
+
     }
 //
 //    public double getScale() {

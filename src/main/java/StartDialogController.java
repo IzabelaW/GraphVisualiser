@@ -3,13 +3,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.io.File;
 
 /**
  * Created by izabelawojciak on 17/10/2018.
@@ -55,6 +55,9 @@ public class StartDialogController {
     private RadioButton readGraphFromFileRadioButton;
 
     @FXML
+    private Button fileChooserButton;
+
+    @FXML
     private VBox erdosRenyiVBox;
 
     @FXML
@@ -64,13 +67,26 @@ public class StartDialogController {
     private VBox barabasiAlbertVBox;
 
     @FXML
-
     private GridPane barabasiAlbertGridPane;
+
+    @FXML
+    private HBox readFromFileHBox;
 
     @FXML
     private void cancelButtonAction() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    private void chooseFileAction() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files", "*.txt"));
+        File file = fileChooser.showOpenDialog(null);
+
+        if (file != null) {
+            filePathTextField.setText(file.getAbsolutePath());
+        }
     }
 
     @FXML
@@ -87,13 +103,98 @@ public class StartDialogController {
             generateRandomGraph = true;
                 if (erdosRenyiModelRadioButton.isSelected()){
                     erdosRenyiModel = true;
-                    numberOfVertices = Integer.parseInt(numberOfVerticesERTextField.getText());
-                    probability = Double.parseDouble(probabilityTextField.getText());
+                    try {
+                        numberOfVertices = Integer.parseInt(numberOfVerticesERTextField.getText());
+
+                        if (numberOfVertices < 0) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Dialog");
+                            alert.setHeaderText("Wrong input");
+                            alert.setContentText("Number of vertices must be positive!");
+
+                            alert.showAndWait();
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Wrong input");
+                        alert.setContentText("Number of vertices must be a number!");
+
+                        alert.showAndWait();
+                    }
+                    try {
+                        probability = Double.parseDouble(probabilityTextField.getText());
+
+                        if (probability < 0 || probability > 1) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Dialog");
+                            alert.setHeaderText("Wrong input");
+                            alert.setContentText("Probability must be a value between 0 and 1!");
+
+                            alert.showAndWait();
+                        }
+                        else if (probability == 0) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Dialog");
+                            alert.setHeaderText("Wrong input");
+                            alert.setContentText("Increase probability otherwise no graph will be generated!");
+
+                            alert.showAndWait();
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Wrong input");
+                        alert.setContentText("Probability must be a number!");
+
+                        alert.showAndWait();
+                    }
                 }
                 else {
                     erdosRenyiModel = false;
-                    numberOfVertices = Integer.parseInt(numberOfVerticesBATextfield.getText());
-                    numberOfConnections = Integer.parseInt(numberOfConnectionsTextField.getText());
+                    try {
+                        numberOfVertices = Integer.parseInt(numberOfVerticesBATextfield.getText());
+
+                        if (numberOfVertices < 0) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Dialog");
+                            alert.setHeaderText("Wrong input");
+                            alert.setContentText("Number of vertices must be positive!");
+
+                            alert.showAndWait();
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Wrong input");
+                        alert.setContentText("Number of vertices must be a number!");
+
+                        alert.showAndWait();
+                    }
+
+                    try {
+                        numberOfConnections = Integer.parseInt(numberOfConnectionsTextField.getText());
+
+                        if (numberOfConnections < 0) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error Dialog");
+                            alert.setHeaderText("Wrong input");
+                            alert.setContentText("Number of connections must be positive!");
+
+                            alert.showAndWait();
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Wrong input");
+                        alert.setContentText("Number of connections must be a number!");
+
+                        alert.showAndWait();
+                    }
                 }
         }
         else {
@@ -122,12 +223,12 @@ public class StartDialogController {
                 if (isNowSelected){
                     erdosRenyiVBox.setDisable(false);
                     barabasiAlbertVBox.setDisable(false);
-                    filePathTextField.setDisable(true);
+                    readFromFileHBox.setDisable(true);
                 }
                 else {
                     erdosRenyiVBox.setDisable(true);
                     barabasiAlbertVBox.setDisable(true);
-                    filePathTextField.setDisable(false);
+                    readFromFileHBox.setDisable(false);
                 }
             }
         });

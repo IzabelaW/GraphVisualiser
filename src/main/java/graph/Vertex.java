@@ -113,56 +113,35 @@ public class Vertex extends Pane {
         this.probability = probability;
     }
 
-    public void setView(int numberOfEdges){
-        double size = 500.0 * (edges.size() / (2.0 * numberOfEdges));
-
-        System.out.println(edges.size());
-
+    public void setView(double size, int step){
         view.setCenterX(x);
         view.setCenterY(y);
         view.setRadius(size);
+        view.setAccessibleText(String.valueOf(index));
 
-        setColor();
+        setColor(step);
         getChildren().add(view);
     }
 
-    private void setColor(){
+    private void setColor(int step){
 
         Color color;
         int degree = edges.size();
 
-        if (degree <= 10)
-            color = Color.DARKBLUE;
-        else if (degree <= 20)
-            color = Color.MEDIUMBLUE;
-        else if (degree <= 30)
-            color = Color.ROYALBLUE;
-        else if (degree <= 40)
-            color = Color.DODGERBLUE;
-        else if (degree <= 50)
-            color = Color.FORESTGREEN;
-        else if (degree <= 60)
-            color = Color.OLIVEDRAB;
-        else if (degree <= 70)
-            color = Color.DARKKHAKI;
-        else if (degree <= 80)
-            color = Color.YELLOWGREEN;
-        else if (degree <= 90)
-            color = Color.KHAKI;
-        else if (degree <= 100)
-            color = Color.GOLD;
-        else if (degree <= 110)
-            color = Color.YELLOW;
-        else if (degree <= 120)
-            color = Color.LIGHTSALMON;
-        else if (degree <= 130)
-            color = Color.ORANGE;
-        else if (degree <= 140)
-            color = Color.DARKORANGE;
-        else if (degree <= 150)
-            color = Color.ORANGERED;
+        if (degree <= step)
+            color = Color.web("rgb(43,72,113)");
+        else if (degree <= 2 * step)
+            color = Color.web("rgb(5,186,221)");
+        else if (degree <= 3 * step)
+            color = Color.web("rgb(186,221,5)");
+        else if (degree <= 4 * step)
+            color = Color.web("rgb(243,223,53)");
+        else if (degree <= 5 * step)
+            color = Color.web("rgb(255,180,4)");
+        else if (degree <= 6 * step)
+            color = Color.web("rgb(255,128,7)");
         else
-            color = Color.RED;
+            color = Color.web("rgb(255,57,2)");
 
         view.setStroke(color);
         view.setFill(color);

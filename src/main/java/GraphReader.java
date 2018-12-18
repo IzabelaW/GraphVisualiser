@@ -32,7 +32,6 @@ public class GraphReader {
 
     public Graph readGraph() throws FileNotFoundException, UnsupportedEncodingException {
 
-        Random random = new Random();
         Graph graph = new Graph(scanner.nextInt());
 
         while (scanner.hasNextInt()) {

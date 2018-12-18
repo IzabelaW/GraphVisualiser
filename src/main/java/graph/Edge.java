@@ -28,13 +28,25 @@ public class Edge extends Group {
     }
 
     public void setView() {
+        placeLineOnTheScreen();
+        line.setStrokeWidth(0.3);
+
+        getChildren().add(line);
+    }
+
+    public void setLighterView() {
+        placeLineOnTheScreen();
+        line.setStrokeWidth(0.1);
+        line.setOpacity(0.7);
+
+        getChildren().add(line);
+    }
+
+    private void placeLineOnTheScreen() {
         line.setStartX(source.getX());
         line.setStartY(source.getY());
 
         line.setEndX(target.getX());
         line.setEndY(target.getY());
-        line.setStrokeWidth(0.2);
-
-        getChildren().add(line);
     }
 }

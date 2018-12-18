@@ -2,6 +2,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -10,13 +12,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * Created by izabelawojciak on 17/10/2018.
  */
 public class StartDialogController {
 
-    private ObservableList<String> algorithmsList = FXCollections.observableArrayList("Radial based algorithm");
+    private ObservableList<String> algorithmsList = FXCollections.observableArrayList("Radial based algorithm", "Forced directed algorithm");
 
     @FXML
     private ChoiceBox algorithmChoiceBox;
@@ -49,15 +52,6 @@ public class StartDialogController {
     private RadioButton erdosRenyiModelRadioButton;
 
     @FXML
-    private RadioButton barabasiAlbertModelRadioButton;
-
-    @FXML
-    private RadioButton readGraphFromFileRadioButton;
-
-    @FXML
-    private Button fileChooserButton;
-
-    @FXML
     private VBox erdosRenyiVBox;
 
     @FXML
@@ -71,6 +65,15 @@ public class StartDialogController {
 
     @FXML
     private HBox readFromFileHBox;
+
+//    @FXML
+//    private HBox methodHBox;
+//
+//    @FXML
+//    private RadioButton kamadaKawaiiRadioButton;
+//
+//    @FXML
+//    private RadioButton fruchtermanReingoldRadioButton;
 
     @FXML
     private void cancelButtonAction() {
@@ -91,6 +94,7 @@ public class StartDialogController {
 
     @FXML
     private void okButtonAction() throws Exception {
+        boolean kamadaKawaii = false;
         boolean generateRandomGraph;
         boolean erdosRenyiModel = false;
         int numberOfVertices = 0;
@@ -108,7 +112,7 @@ public class StartDialogController {
 
                         if (numberOfVertices < 0) {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error Dialog");
+                            alert.setTitle("Error");
                             alert.setHeaderText("Wrong input");
                             alert.setContentText("Number of vertices must be positive!");
 
@@ -128,7 +132,7 @@ public class StartDialogController {
 
                         if (probability < 0 || probability > 1) {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error Dialog");
+                            alert.setTitle("Error");
                             alert.setHeaderText("Wrong input");
                             alert.setContentText("Probability must be a value between 0 and 1!");
 
@@ -136,7 +140,7 @@ public class StartDialogController {
                         }
                         else if (probability == 0) {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error Dialog");
+                            alert.setTitle("Error");
                             alert.setHeaderText("Wrong input");
                             alert.setContentText("Increase probability otherwise no graph will be generated!");
 
@@ -159,7 +163,7 @@ public class StartDialogController {
 
                         if (numberOfVertices < 0) {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error Dialog");
+                            alert.setTitle("Error");
                             alert.setHeaderText("Wrong input");
                             alert.setContentText("Number of vertices must be positive!");
 
@@ -180,7 +184,7 @@ public class StartDialogController {
 
                         if (numberOfConnections < 0) {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Error Dialog");
+                            alert.setTitle("Error");
                             alert.setHeaderText("Wrong input");
                             alert.setContentText("Number of connections must be positive!");
 
@@ -200,16 +204,30 @@ public class StartDialogController {
         else {
             generateRandomGraph = false;
             filePath = filePathTextField.getText();
+
+            if (Objects.equals(filePath, "")){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Wrong input");
+                alert.setContentText("Empty file path!");
+
+                alert.showAndWait();
+            }
         }
 
         algorithm = algorithmChoiceBox.getSelectionModel().getSelectedIndex();
 
-        Stage mainStage = new Stage();
-        Main main = new Main(generateRandomGraph, erdosRenyiModel, numberOfVertices, probability, numberOfConnections, filePath, algorithm);
-        main.start(mainStage);
 
-        Stage stage = (Stage) okButton.getScene().getWindow();
-        stage.close();
+        if (!Objects.equals(numberOfVerticesERTextField.getText(), "") && !Objects.equals(probabilityTextField.getText(), "")
+                || !Objects.equals(numberOfVerticesBATextfield.getText(), "") && !Objects.equals(numberOfConnectionsTextField.getText(), "")
+                || !Objects.equals(filePathTextField.getText(), "")) {
+            Stage mainStage = new Stage();
+            Main main = new Main(generateRandomGraph, erdosRenyiModel, numberOfVertices, probability, numberOfConnections, filePath, algorithm, kamadaKawaii);
+            main.start(mainStage);
+
+            Stage stage = (Stage) okButton.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML
@@ -247,8 +265,28 @@ public class StartDialogController {
             }
         });
 
+//        algorithmChoiceBox.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                if (algorithmChoiceBox.getSelectionModel().getSelectedIndex() == 0) {
+//                    methodHBox.setDisable(true);
+//                }
+//                else {
+//                    methodHBox.setDisable(false);
+//                }
+//            }
+//        });
+
         generateRandomGraphRadioButton.setSelected(true);
         erdosRenyiModelRadioButton.setSelected(true);
+//        fruchtermanReingoldRadioButton.setSelected(true);
+
+//        if (algorithmChoiceBox.getSelectionModel().getSelectedIndex() == 0) {
+//            methodHBox.setDisable(true);
+//        }
+//        else {
+//            methodHBox.setDisable(false);
+//        }
     }
 
 

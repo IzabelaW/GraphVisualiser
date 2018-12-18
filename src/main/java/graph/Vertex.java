@@ -28,7 +28,6 @@ public class Vertex extends Pane {
         this.index = index;
         edges = new ArrayList<>();
         children = new ArrayList<>();
-
         view = new Circle();
     }
 
@@ -117,7 +116,6 @@ public class Vertex extends Pane {
         view.setCenterX(x);
         view.setCenterY(y);
         view.setRadius(size);
-        view.setAccessibleText(String.valueOf(index));
 
         setColor(step);
         getChildren().add(view);
@@ -145,5 +143,9 @@ public class Vertex extends Pane {
 
         view.setStroke(color);
         view.setFill(color);
+    }
+
+    public Vector getVector() {
+        return new Vector(this.x, this.y);
     }
 }

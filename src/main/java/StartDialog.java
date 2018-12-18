@@ -15,10 +15,11 @@ public class StartDialog extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/dialog.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/StartDialog/dialog.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Graph Visualiser");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

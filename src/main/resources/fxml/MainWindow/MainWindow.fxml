@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainWindowController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="newMenuItem" mnemonicParsing="false" text="New" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+            <MenuItem fx:id="saveAsMenuItem" mnemonicParsing="false" text="Save As…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem fx:id="aboutGraphVisualiserMenuItem" mnemonicParsing="false" text="About GraphVisualiser" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.2" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane>
+               <children>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="177.0" fx:id="graphInfoVbox">
+                           <children>
+                              <Label text="Number of vertices:" />
+                              <Label fx:id="numberOfVerticesLabel"/>
+                              <Label text="Number of edges:" />
+                              <Label fx:id="numberOfEdgesLabel"/>
+                              <Label text="Vertices:" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children></AnchorPane>
+        <BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0">
+               <center>
+                  <ScrollPane fx:id="scrollPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  </ScrollPane>
+               </center>
+        </BorderPane>
+      </items>
+    </SplitPane>
+  </children>
+  <stylesheets>
+    <URL value="@MainWindow.css" />
+  </stylesheets>
+</VBox>

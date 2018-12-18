@@ -1,8 +1,9 @@
 package graph;
 
 import javafx.scene.Group;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
-import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,21 +15,26 @@ public class Graph {
 
     private ArrayList<Vertex> vertices;
     private ArrayList<Edge> edges;
+    private ArrayList<Edge> removedEdges;
     private Edge[][] incidenceMatrix;
     private Vertex centralVertex;
     private int depth;
     private Group canvas;
     private ScrollPane scrollPane;
+    private int numberOfVertices;
 
     public Graph(int numberOfVertices) {
+        this.numberOfVertices = numberOfVertices;
         vertices = new ArrayList<>();
         edges = new ArrayList<>();
+        removedEdges = new ArrayList<>();
         incidenceMatrix = new Edge[numberOfVertices][numberOfVertices];
         canvas = new Group();
-        scrollPane = new ScrollPane(canvas);
+    }
 
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
+    public void setScrollPane(ScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+        scrollPane.setContent(canvas);
     }
 
     public ScrollPane getScrollPane() {
@@ -38,6 +44,15 @@ public class Graph {
     public void addEdge(Edge edge) {
         if (!edges.contains(edge)) {
             edges.add(edge);
+            incidenceMatrix[edge.getSource().getIndex()][edge.getTarget().getIndex()] = edge;
+            incidenceMatrix[edge.getTarget().getIndex()][edge.getSource().getIndex()] = edge;
+            canvas.getChildren().add(edge);
+        }
+    }
+
+    public void addRemovedEdge(Edge edge) {
+        if (!removedEdges.contains(edge) && !edges.contains(edge)){
+            removedEdges.add(edge);
             incidenceMatrix[edge.getSource().getIndex()][edge.getTarget().getIndex()] = edge;
             incidenceMatrix[edge.getTarget().getIndex()][edge.getSource().getIndex()] = edge;
             canvas.getChildren().add(edge);
@@ -74,37 +89,50 @@ public class Graph {
 
     public void findCentralVertex() {
 
-        int maxLevel = 0;
-        LinkedList<Vertex> queue = new LinkedList<>();
-        int degree[] = new int[vertices.size()];
-        int level[] = new int[vertices.size()];
+        if (vertices.size() != numberOfVertices) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong input");
+            alert.setContentText("This graph is disconnected!");
+            alert.show();
 
-        for (Vertex vertex : vertices) {
-            degree[vertex.getIndex()] = vertex.getDegree();
-            level[vertex.getIndex()] = 0;
+            Stage stage = (Stage) scrollPane.getScene().getWindow();
+            stage.close();
         }
+        else {
 
-        for (Vertex vertex : vertices) {
-            if (degree[vertex.getIndex()] == 1) {
-                queue.add(vertex);
+            int maxLevel = 0;
+            LinkedList<Vertex> queue = new LinkedList<>();
+            int degree[] = new int[vertices.size()];
+            int level[] = new int[vertices.size()];
+
+            for (Vertex vertex : vertices) {
+                degree[vertex.getIndex()] = vertex.getDegree();
                 level[vertex.getIndex()] = 0;
             }
-        }
 
-        while (queue.size() != 0) {
-            Vertex vertex = queue.poll();
+            for (Vertex vertex : vertices) {
+                if (degree[vertex.getIndex()] == 1) {
+                    queue.add(vertex);
+                    level[vertex.getIndex()] = 0;
+                }
+            }
 
-            for (Vertex adjacentVertex : vertices) {
-                if (incidenceMatrix[vertex.getIndex()][adjacentVertex.getIndex()] != null) {
-                    degree[adjacentVertex.getIndex()]--;
+            while (queue.size() != 0) {
+                Vertex vertex = queue.poll();
 
-                    if (degree[adjacentVertex.getIndex()] == 1) {
-                        queue.addLast(adjacentVertex);
-                        level[adjacentVertex.getIndex()] = level[vertex.getIndex()] + 1;
+                for (Vertex adjacentVertex : vertices) {
+                    if (incidenceMatrix[vertex.getIndex()][adjacentVertex.getIndex()] != null) {
+                        degree[adjacentVertex.getIndex()]--;
 
-                        if (level[adjacentVertex.getIndex()] > maxLevel) {
-                            maxLevel = level[adjacentVertex.getIndex()];
-                            this.centralVertex = adjacentVertex;
+                        if (degree[adjacentVertex.getIndex()] == 1) {
+                            queue.addLast(adjacentVertex);
+                            level[adjacentVertex.getIndex()] = level[vertex.getIndex()] + 1;
+
+                            if (level[adjacentVertex.getIndex()] > maxLevel) {
+                                maxLevel = level[adjacentVertex.getIndex()];
+                                this.centralVertex = adjacentVertex;
+                            }
                         }
                     }
                 }
@@ -141,27 +169,48 @@ public class Graph {
 
     public void draw() {
 
-        double screenWidth = Screen.getPrimary().getBounds().getWidth();
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        double factor = Math.min(screenWidth, screenHeight) / depth;
+        double screenWidth = scrollPane.getViewportBounds().getWidth();
+        double screenHeight = scrollPane.getViewportBounds().getHeight();
+        double factor = Math.log(screenWidth * screenHeight);
 
         int maxDegree = getMaxDegree();
         int step = maxDegree / 7;
         double size;
 
-        for (Vertex vertex : vertices){
-            size = factor * (vertex.getDegree() / (2.0 * edges.size()));
-            vertex.setView(size, step);
-        }
-
         for (Edge edge : edges){
             edge.setView();
         }
 
+        for (Edge edge : removedEdges){
+            edge.setLighterView();
+        }
+
+        for (Vertex vertex : vertices){
+            size = (factor * Math.sqrt(vertex.getDegree())) / Math.sqrt(vertices.size());
+            vertex.setView(size, step);
+        }
+
     }
-//
-//    public double getScale() {
-//        return this.scrollPane.getScaleValue();
-//    }
+
+    public Graph clone() {
+        Graph clonedGraph = new Graph(vertices.size());
+
+        for (Vertex vertex : vertices) {
+            Vertex clonedVertex = new Vertex(vertex.getIndex());
+            clonedVertex.setX(vertex.getX());
+            clonedVertex.setY(vertex.getY());
+            clonedGraph.addVertex(clonedVertex);
+        }
+
+        for (Edge edge : edges) {
+            Vertex clonedSourceVertex = clonedGraph.getVertex(edge.getSource().getIndex());
+            Vertex clonedTargetVertex = clonedGraph.getVertex(edge.getTarget().getIndex());
+
+            Edge clonedEdge = new Edge(clonedSourceVertex, clonedTargetVertex);
+            clonedGraph.addEdge(clonedEdge);
+        }
+
+        return  clonedGraph;
+    }
 }
 

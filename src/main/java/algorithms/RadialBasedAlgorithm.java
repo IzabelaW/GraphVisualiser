@@ -3,7 +3,6 @@ package algorithms;
 import graph.Edge;
 import graph.Graph;
 import graph.Vertex;
-import javafx.stage.Screen;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -23,11 +22,12 @@ public class RadialBasedAlgorithm implements Algorithm {
         this.graph = graph;
     }
 
-    public Graph doLogic() {
+    public void doLogic() {
         BFS(graph.getVertex(0));
         removeEdgesFromSpanningTree();
         tree.findCentralVertex();
         Vertex centralVertex = tree.getCentralVertex();
+
         int depth = tree.getDepth();
 
         addRemovedEdgesToSpanningTree();
@@ -35,8 +35,9 @@ public class RadialBasedAlgorithm implements Algorithm {
         removeEdgesFromSpanningTree();
         countLeafsForAllVertices();
 
-        double screenWidth = Screen.getPrimary().getBounds().getWidth();
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        double screenWidth = graph.getScrollPane().getViewportBounds().getWidth();
+        double screenHeight = graph.getScrollPane().getViewportBounds().getHeight();
+
         double R = 0.95 * (Math.min(screenWidth, screenHeight) / (2.0 * (double) depth));
         double arc;
         double parentArc;
@@ -71,9 +72,7 @@ public class RadialBasedAlgorithm implements Algorithm {
         }
 
 
-//        addRemovedEdgesToSpanningTree();
-
-        return tree;
+        addRemovedEdgesToSpanningTree();
     }
 
     private void BFS(Vertex centralVertex) {
@@ -82,6 +81,7 @@ public class RadialBasedAlgorithm implements Algorithm {
         boolean marked[] = new boolean[numberOfVertices];
         LinkedList<Vertex> queue = new LinkedList<>();
         tree = new Graph(numberOfVertices);
+        tree.setScrollPane(graph.getScrollPane());
         removedEdges = new ArrayList<>();
         addedEdges = new ArrayList<>();
         radialQueue = new LinkedList<>();
@@ -168,8 +168,12 @@ public class RadialBasedAlgorithm implements Algorithm {
     private void addRemovedEdgesToSpanningTree() {
 
         for (Edge edge : removedEdges) {
-            tree.addEdge(edge);
+            tree.addRemovedEdge(edge);
         }
 
+    }
+
+    public Graph getFinalGraph() {
+        return tree;
     }
 }

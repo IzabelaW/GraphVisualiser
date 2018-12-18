@@ -1,10 +1,11 @@
 import algorithms.Algorithm;
+import algorithms.ForcedDirectedAlgorithm;
 import algorithms.RadialBasedAlgorithm;
 import graph.Graph;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -21,8 +22,9 @@ public class Main extends Application {
     private int numberOfConnections;
     private String filePath;
     private int algorithmIndex;
+    private boolean kamadaKawaii;
 
-    public Main(boolean generateRandomGraph, boolean erdosRenyiModel, int numberOfVertices, double probability, int numberOfConnections, String filePath, int algorithmIndex) {
+    public Main(boolean generateRandomGraph, boolean erdosRenyiModel, int numberOfVertices, double probability, int numberOfConnections, String filePath, int algorithmIndex, boolean kamadaKawaii) {
         this.generateRandomGraph = generateRandomGraph;
         this.erdosRenyiModel = erdosRenyiModel;
         this.numberOfVertices = numberOfVertices;
@@ -30,6 +32,7 @@ public class Main extends Application {
         this.numberOfConnections = numberOfConnections;
         this.filePath = filePath;
         this.algorithmIndex = algorithmIndex;
+        this.kamadaKawaii = kamadaKawaii;
     }
 
     public static void main(String[] args) {
@@ -40,7 +43,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Graph initialGraph;
-        Graph finalGraph;
 
         if (generateRandomGraph) {
             GraphGenerator graphGenerator = new GraphGenerator(numberOfVertices);
@@ -62,22 +64,23 @@ public class Main extends Application {
             case 0:
                 algorithm = new RadialBasedAlgorithm(initialGraph);
                 break;
+            case 1:
+                algorithm = new ForcedDirectedAlgorithm(initialGraph, kamadaKawaii);
+                break;
             default:
                 algorithm = new RadialBasedAlgorithm(initialGraph);
                 break;
         }
 
-        BorderPane root = new BorderPane();
+        FinalGraphContainer.getInstance().setFinalGraph(initialGraph);
 
-
-        finalGraph = algorithm.doLogic();
-        finalGraph.draw();
-
-        root.setCenter(finalGraph.getScrollPane());
-
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainWindow/MainWindow.fxml"));
         Scene scene = new Scene(root, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Graph Visualiser");
         primaryStage.show();
+
+        algorithm.doLogic();
+        algorithm.getFinalGraph().draw();
     }
 }
